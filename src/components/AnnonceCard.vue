@@ -13,21 +13,23 @@ const openAnnonce = () => {
 </script>
 
 <template>
-  <q-card class="q-mb-md">
+  <q-card class="card q-mb-md">
     <q-card-section>
-      <div class="text-h6">
+      <div class="card-title">
         {{ annonce.title }}
       </div>
 
-      <div class="text-caption text-orange">
-        {{ annonce.category?.name }}
+      <div class="card-info">
+        <span class="badge">
+          {{ annonce.category?.name }}
+        </span>
+
+        <span class="card-city">
+          {{ annonce.city }}
+        </span>
       </div>
 
-      <div class="text-grey">
-        {{ annonce.city }}
-      </div>
-
-      <div class="q-mt-sm">
+      <div class="card-description">
         {{ annonce.description }}
       </div>
     </q-card-section>
@@ -37,3 +39,30 @@ const openAnnonce = () => {
     </q-card-actions>
   </q-card>
 </template>
+
+<style scoped>
+.card-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.card-info {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.card-city {
+  color: #6b7280;
+}
+
+.card-description {
+  margin-top: 6px;
+}
+.card:hover {
+  transform: translateY(-2px);
+  transition: 0.2s;
+}
+</style>

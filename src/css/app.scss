@@ -1,1 +1,40 @@
 // app global css in SCSS form
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600&display=swap');
+
+:root {
+  --primary: #2f5b91;
+  --accent: #f39c4a;
+  --background: #f5f6f8;
+  --text: #1f2937;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--background);
+  color: var(--text);
+}
+
+.title {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.card {
+  background: white;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.app-container {
+  max-width: 1100px;
+  margin: auto;
+}
+
+.badge {
+  background: var(--accent);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+}
