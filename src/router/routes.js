@@ -17,6 +17,10 @@ const routes = [
         path: 'annonces/:id',
         component: () => import('pages/AnnonceDetailPage.vue'),
       },
+      {
+        path: 'publier',
+        component: () => import('pages/PublierAnnoncePage.vue'),
+      },
     ],
   },
 
