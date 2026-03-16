@@ -9,16 +9,17 @@ const loading = ref(false)
 const errorMessage = ref('')
 
 const form = ref({
+  name: '',
   email: '',
   password: '',
 })
 
-const login = async () => {
+const register = async () => {
   errorMessage.value = ''
   loading.value = true
 
   try {
-    const response = await api.post('/login', form.value)
+    const response = await api.post('/register', form.value)
 
     const token = response.data.token
 
@@ -27,7 +28,12 @@ const login = async () => {
     router.push('/annonces')
   } catch (error) {
     console.error(error)
-    errorMessage.value = 'Email ou mot de passe incorrect.'
+
+    if (error.response?.status === 422) {
+      errorMessage.value = 'Certains champs sont invalides ou déjà utilisés.'
+    } else {
+      errorMessage.value = 'La création du compte a échoué.'
+    }
   } finally {
     loading.value = false
   }
@@ -37,11 +43,13 @@ const login = async () => {
 <template>
   <q-page padding>
     <div class="app-container">
-      <div class="title q-mb-lg">Se connecter</div>
+      <div class="title q-mb-lg">Créer un compte</div>
 
       <q-card class="card">
         <q-card-section>
-          <q-form @submit.prevent="login" class="q-gutter-md">
+          <q-form @submit.prevent="register" class="q-gutter-md">
+            <q-input v-model="form.name" label="Nom" outlined dense />
+
             <q-input v-model="form.email" label="Email" type="email" outlined dense />
 
             <q-input v-model="form.password" label="Mot de passe" type="password" outlined dense />
@@ -50,11 +58,11 @@ const login = async () => {
               {{ errorMessage }}
             </div>
 
-            <q-btn label="Se connecter" color="primary" type="submit" :loading="loading" />
+            <q-btn label="Créer un compte" color="primary" type="submit" :loading="loading" />
 
             <div class="q-mt-md text-center">
-              Pas encore de compte ?
-              <router-link to="/register" class="text-primary"> Créer un compte </router-link>
+              Déjà inscrit ?
+              <router-link to="/login" class="text-primary"> Se connecter </router-link>
             </div>
           </q-form>
         </q-card-section>
