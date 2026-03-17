@@ -1,20 +1,14 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { api } from 'boot/axios'
 
 const loading = ref(false)
+const loadingCategories = ref(false)
 const successMessage = ref('')
 const errorMessage = ref('')
+const categoryOptions = ref([])
 
-const categoryOptions = [
-  { label: 'Formation', value: 1 },
-  { label: 'Emploi - Alternance - Stage', value: 2 },
-  { label: 'Loisirs', value: 3 },
-  { label: 'Logement', value: 4 },
-  { label: 'Restaurant', value: 5 },
-]
-
-const form = ref({
+const getInitialForm = () => ({
   title: '',
   description: '',
   category_id: null,
@@ -24,8 +18,27 @@ const form = ref({
   contact_email: '',
   contact_phone: '',
   status: 'active',
-  user_id: 1,
 })
+
+const form = ref(getInitialForm())
+
+const loadCategories = async () => {
+  loadingCategories.value = true
+
+  try {
+    const response = await api.get('/categories')
+
+    categoryOptions.value = response.data.map((category) => ({
+      label: category.name,
+      value: category.id,
+    }))
+  } catch (error) {
+    console.error('Erreur chargement catégories', error)
+    errorMessage.value = 'Impossible de charger les catégories.'
+  } finally {
+    loadingCategories.value = false
+  }
+}
 
 const submitAnnonce = async () => {
   successMessage.value = ''
@@ -36,26 +49,25 @@ const submitAnnonce = async () => {
     await api.post('/annonces', form.value)
 
     successMessage.value = 'Annonce publiée avec succès.'
-
-    form.value = {
-      title: '',
-      description: '',
-      category_id: null,
-      organisation_name: '',
-      organisation_address: '',
-      city: '',
-      contact_email: '',
-      contact_phone: '',
-      status: 'active',
-      user_id: 1,
-    }
+    form.value = getInitialForm()
   } catch (error) {
     console.error('Erreur API', error)
-    errorMessage.value = "La publication de l'annonce a échoué."
+
+    if (error.response?.status === 401) {
+      errorMessage.value = 'Tu dois être connecté pour publier une annonce.'
+    } else if (error.response?.status === 422) {
+      errorMessage.value = 'Certains champs sont invalides ou manquants.'
+    } else {
+      errorMessage.value = "La publication de l'annonce a échoué."
+    }
   } finally {
     loading.value = false
   }
 }
+
+onMounted(() => {
+  loadCategories()
+})
 </script>
 
 <template>
@@ -80,6 +92,7 @@ const submitAnnonce = async () => {
               label="Catégorie"
               outlined
               dense
+              :loading="loadingCategories"
             />
 
             <q-input
