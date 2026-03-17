@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { api } from 'boot/axios'
+import { api, setAuthToken } from 'boot/axios'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -22,8 +22,10 @@ const login = async () => {
 
     const token = response.data.token
 
-    localStorage.setItem('token', token)
+    // Enregistre le token
+    setAuthToken(token)
 
+    // Redirection après connexion
     router.push('/annonces')
   } catch (error) {
     console.error(error)
