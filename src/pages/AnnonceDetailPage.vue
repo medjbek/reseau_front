@@ -9,17 +9,27 @@ const annonce = ref(null)
 const loading = ref(true)
 
 const fetchAnnonce = async () => {
+  const response = await api.get(`/annonces/${route.params.id}`)
+  annonce.value = response.data.data
+}
+
+const incrementViews = async () => {
+  await api.post(`/annonces/${route.params.id}/view`)
+}
+
+onMounted(async () => {
   try {
-    const response = await api.get(`/annonces/${route.params.id}`)
-    annonce.value = response.data.data
+    await fetchAnnonce()
+
+    if (annonce.value) {
+      await incrementViews()
+    }
   } catch (error) {
-    console.error('Erreur API', error)
+    console.error('Erreur détail annonce', error)
   } finally {
     loading.value = false
   }
-}
-
-onMounted(fetchAnnonce)
+})
 </script>
 
 <template>
