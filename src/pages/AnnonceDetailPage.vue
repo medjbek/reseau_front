@@ -9,31 +9,22 @@ const annonce = ref(null)
 const loading = ref(true)
 
 const fetchAnnonce = async () => {
-  try {
-    const response = await api.get(`/annonces/${route.params.id}`)
-    annonce.value = response.data.data
-  } catch (error) {
-    console.error('Erreur API', error)
-  } finally {
-    loading.value = false
-  }
+  const response = await api.get(`/annonces/${route.params.id}`)
+  annonce.value = response.data.data
 }
 
 const incrementViews = async () => {
-  try {
-    await api.post(`/annonces/${route.params.id}/view`)
-  } catch (error) {
-    console.error('Erreur incrémentation vues', error)
-  }
+  await api.post(`/annonces/${route.params.id}/view`)
 }
 
 onMounted(async () => {
   await fetchAnnonce()
 
-  // 🔥 incrément en arrière-plan (ne bloque plus l'affichage)
   if (annonce.value) {
     incrementViews()
   }
+
+  loading.value = false
 })
 </script>
 
