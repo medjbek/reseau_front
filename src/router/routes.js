@@ -30,6 +30,10 @@ const routes = [
         path: 'register',
         component: () => import('pages/RegisterPage.vue'),
       },
+      {
+        path: 'admin/stats',
+        component: () => import('pages/AdminStatsPage.vue'),
+      },
     ],
   },
 

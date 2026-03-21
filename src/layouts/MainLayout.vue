@@ -1,31 +1,46 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { removeAuthToken } from 'boot/axios'
+import { removeAuthToken, api } from 'boot/axios'
 
 const router = useRouter()
 const route = useRoute()
 
 const isAuthenticated = ref(false)
+const isAdmin = ref(false)
 
-const checkAuth = () => {
+const checkAuth = async () => {
   isAuthenticated.value = !!localStorage.getItem('token')
+
+  if (!isAuthenticated.value) {
+    isAdmin.value = false
+    return
+  }
+
+  try {
+    const response = await api.get('/me')
+    isAdmin.value = !!response.data.user?.is_admin
+  } catch (error) {
+    console.error('Erreur récupération utilisateur', error)
+    isAdmin.value = false
+  }
 }
 
 const logout = () => {
   removeAuthToken()
-  checkAuth()
+  isAuthenticated.value = false
+  isAdmin.value = false
   router.push('/login')
 }
 
-onMounted(() => {
-  checkAuth()
+onMounted(async () => {
+  await checkAuth()
 })
 
 watch(
   () => route.fullPath,
-  () => {
-    checkAuth()
+  async () => {
+    await checkAuth()
   },
 )
 </script>
@@ -41,6 +56,8 @@ watch(
         <q-btn flat no-caps label="Annonces" to="/annonces" />
 
         <q-btn v-if="isAuthenticated" flat no-caps label="Publier une annonce" to="/publier" />
+
+        <q-btn v-if="isAdmin" flat no-caps label="Statistiques" to="/admin/stats" />
 
         <q-btn v-if="!isAuthenticated" flat no-caps label="Se connecter" to="/login" />
 

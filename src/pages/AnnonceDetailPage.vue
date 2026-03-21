@@ -18,17 +18,13 @@ const incrementViews = async () => {
 }
 
 onMounted(async () => {
-  try {
-    await fetchAnnonce()
+  await fetchAnnonce()
 
-    if (annonce.value) {
-      await incrementViews()
-    }
-  } catch (error) {
-    console.error('Erreur détail annonce', error)
-  } finally {
-    loading.value = false
+  if (annonce.value) {
+    incrementViews()
   }
+
+  loading.value = false
 })
 </script>
 
