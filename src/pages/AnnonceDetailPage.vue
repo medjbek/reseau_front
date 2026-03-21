@@ -19,7 +19,22 @@ const fetchAnnonce = async () => {
   }
 }
 
-onMounted(fetchAnnonce)
+const incrementViews = async () => {
+  try {
+    await api.post(`/annonces/${route.params.id}/view`)
+  } catch (error) {
+    console.error('Erreur incrémentation vues', error)
+  }
+}
+
+onMounted(async () => {
+  await fetchAnnonce()
+
+  // 🔥 incrément en arrière-plan (ne bloque plus l'affichage)
+  if (annonce.value) {
+    incrementViews()
+  }
+})
 </script>
 
 <template>
